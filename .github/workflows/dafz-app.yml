@@ -1,0 +1,27 @@
+name: Test Stock Noti
+
+on:
+  schedule:
+    - cron: "*/5 * * * *" # UTC 0:30 (台灣時間 8:30)
+  workflow_dispatch: # 保留手動觸發選項
+
+jobs:
+  scrape-and-notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run stock price notification script by dafz
+        env:
+          LINE_NOTIFY_TOKEN: ${{ secrets.LINE_NOTIFY_TOKEN }}
+        run: python stock_price_notification.py
